@@ -57,7 +57,8 @@ Randomly rotating and/or flipping the images in the dataset
 |fc2	|Linear(in_features=1024, out_features=512, bias=True)|
 |dropout2|	Dropout(p=0.25)|
 |fc3	|Linear(in_features=512, out_features=136, bias=True)|
-Regarding to Kaggle Competition, NaimishNet architecture is referenced due to its performance anaylsis. 
+
+> Regarding to Kaggle Competition, NaimishNet architecture is referenced due to its performance anaylsis. 
 
 ### training the model
 * For an optimizer, I selected Adam ptimizer. Adam optimizer is widely preferred with convolutional neural networks.
