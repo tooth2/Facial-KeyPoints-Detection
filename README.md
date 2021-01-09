@@ -20,3 +20,70 @@ The original set of face image data was extracted from the YouTube Faces Dataset
 * training data set: 3462 images' keypoints
 * testing data set: 2308 images' keypoints
 
+### Data Processing
+Data_transform to turn an input image that rescales, grayscale random crop, normalizes and turns the images into torch Tensors.
+> a normalized, square, grayscale image in Tensor format. 
+> RandomCrop operation and normalization to perform Data Augmentation
+
+*further data augmentation to explore*
+Randomly rotating and/or flipping the images in the dataset
+
+
+### Build Neural Network 
+1. Start to build from simple small 3-layer network : one 1 conv/relu + Max pooling layer (models0.py) + (flatten) 1 Fully connected layer
+
+|Layer  | Description |
+|--|--|
+|conv1 | onv2d(1, 32, kernel_size=(5, 5), stride=(1, 1)|
+|pool| MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)|
+|fc1 | Linear(in_features= 128, out_features=136, bias=True) | 
+
+2. Build up to more complicated neural networks by adding more conv/relu + Max pooling layer with dropout layer to avoid overfitting  (models.py)
+
+|Layer	|Description|
+|--|--|
+|conv1|	Conv2d(1, 32, kernel_size=(5, 5), stride=(1, 1)|
+|pool1	|MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)|
+|conv2	|Conv2d(32, 64, kernel_size=(3, 3), stride=(1, 1))|
+|pool2	|MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)|
+|conv3	|Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1))|
+|pool3	|MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)|
+|conv4	|Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1))|
+|pool4	|MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)|
+|conv5	|Conv2d(256, 512, kernel_size=(1, 1), stride=(1, 1))|
+|pool5	|MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)|
+|fc1	|Linear(in_features=18432, out_features=1024, bias=True)|
+|dropout1|	Dropout(p=0.25)|
+|fc2	|Linear(in_features=1024, out_features=512, bias=True)|
+|dropout2|	Dropout(p=0.25)|
+|fc3	|Linear(in_features=512, out_features=136, bias=True)|
+Regarding to Kaggle Competition, NaimishNet architecture is referenced due to its performance anaylsis. 
+
+### training the model
+* For an optimizer, I selected Adam ptimizer. Adam optimizer is widely preferred with convolutional neural networks.
+* For Loss Function, I selected SmoothL1Loss, since it is a very reliable alternative to MSELoss, because it tends to be more robust to outliers in the data while training. It combines the advantages of both L1-loss (steady gradients for large values of x) and L2-loss (fewer oscillations during updates when x is small). 
+
+## Face Detection with Harr Cascade filter (Notebook3) 
+1. Applied [Haar cascade face detector](https://github.com/opencv/opencv/tree/master/data/haarcascades) for detecting frontal faces in the image 
+2. Also applied data transform any face imagge into a normalized, square, grayscale image and then a Tensor for the model to take in as input (similar to above data_transform step Notebook 2)
+* Convert the face from RGB to grayscale
+* Normalize the grayscale image so that its color range falls in [0,1] instead of [0,255]
+* Rescale the detected face to be the expected square size for your CNN
+* Reshape the numpy image into a torch image
+3. After face detection with a Haar cascade and face pre-processing, applie trained model in Notebook2 to each detected face, and display the predicted keypoints for each face in the image
+Since cv2.copyMakeBorder added black pixel padding to the faces, so that another data processing step is required: 
+```python
+margin = int(w*0.3)
+roi = image_copy[max(y-margin,0):min(y+h+margin,image.shape[0]), 
+                 max(x-margin,0):min(x+w+margin,image.shape[1])]
+```
+
+## Fun with Facial Keypoints(Notebook4)
+After detecting Keypoints, add sunglasses or hat to the face images. 
+
+## Discussion 
+Next Step would be...
+1. Improve Accuracy - apply Transfer learning 
+I am going to try transfer lerning such as ResNet50 , VGG-19 or some deeper network architecture like inception3 using PyTorch's pretrained model 
+2. Data Augmentation
+Randomly rotating and/or flipping the images in the dataset
