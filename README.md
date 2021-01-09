@@ -82,6 +82,7 @@ During training, PyTorch performs backpropagation by keeping track of the networ
 
 ## Face Detection with Harr Cascade filter (Notebook3) 
 1. Applied [Haar cascade face detector](https://github.com/opencv/opencv/tree/master/data/haarcascades) for detecting frontal faces in the image 
+![haar cascade detector](images/haar_cascade_ex.png)
 2. Also applied data transform any face imagge into a normalized, square, grayscale image and then a Tensor for the model to take in as input (similar to above data_transform step Notebook 2)
 * Convert the face from RGB to grayscale
 * Normalize the grayscale image so that its color range falls in [0,1] instead of [0,255]
@@ -97,6 +98,7 @@ roi = image_copy[max(y-margin,0):min(y+h+margin,image.shape[0]),
 
 ## Fun with Facial Keypoints(Notebook4)
 After detecting Keypoints,using trained facial keypoint detector, in the notebook4, I added sunglasses to detected face's in an image by using the keypoints detected around a person's eyes. In order to overlay fun images like sunglasses to face image, alpha channel is used. Alpha channel is the 4th channel respresents the transparency level of each pixel in the image from RGB image. Here's how the transparency channel works: the lower the value, the more transparent, or see-through, the pixel will become. The lower bound (completely transparent) is zero here, so any pixels set to 0 will not be seen; these look like white background pixels in the image above, but they are actually totally transparent. With this transparent channel I can place this rectangular image of sunglasses on an image of a face and still see the face area that is techically covered by the transparentbackground of the sunglasses image.
+![sun glass](images/face_filter_ex.png)
 
 ## Discussion 
 Next Step would be...
