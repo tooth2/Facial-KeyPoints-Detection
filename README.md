@@ -14,6 +14,7 @@ The project goal is to combine computer vision techniques and deep learning arch
 
 ## Implementation Approach
 ### DATA 
+This set of image data has been extracted from the YouTube Faces Dataset, which includes videos of people in [YouTube videos](https://www.cs.tau.ac.il/~wolf/ytfaces/). These videos have been fed through some processing steps and turned into sets of image frames containing one face and the associated keypoints.
 Facial keypoints (also called facial landmarks) are represented by 68 keypoints in a single face, with coordinates (x, y), for that face. These keypoints mark important areas of the face: the eyes, corners of the mouth, the nose, like the image below etc. These keypoints are relevant for a variety of tasks, such as face filters, emotion recognition, pose recognition, and so on. Here they are, numbered, are arranged and matched to represent different portions of the face.
 <img src="images/landmarks_numbered.jpg" width = "200"/>
 The original set of face image data was extracted from the YouTube Faces Dataset, and the facial keypoints dataset consists of 5770 color images. All of these images are summarized in CSV files which include keypoint's (x,y) coordinates
@@ -21,15 +22,29 @@ The original set of face image data was extracted from the YouTube Faces Dataset
 * testing data set: 2308 images' keypoints
 
 ### Data Processing
-Data_transform to turn an input image that rescales, grayscale random crop, normalizes and turns the images into torch Tensors.
-> a normalized, square, grayscale image in Tensor format. 
-> RandomCrop operation and normalization to perform Data Augmentation
+All images are not of the same size, and neural networks often expect images that are standardized; a fixed size, with a normalized range for color ranges and coordinates, and (for PyTorch) converted from numpy lists and arrays to Tensors. Applied PyTorch's Data_transform to turn an input image that rescales, grayscale random crop, normalizes and turns the images into torch Tensors.
+* Normalize: to convert a color image to grayscale values with a range of [0,1] and normalize the keypoints to be in a range of about [-1, 1]
+* Rescale: to rescale an image to a desired size.
+* RandomCrop: to crop an image randomly.
+* ToTensor: to convert numpy images to torch images.
+```python
+data_transform = transforms.Compose([Rescale(250),
+                                     RandomCrop(224),
+                                     Normalize(),
+                                     ToTensor()])
+```
 
 *further data augmentation to explore*
 Randomly rotating and/or flipping the images in the dataset
 
 
 ### Build Neural Network 
+To define a neural network in PyTorch, I need to define the layers of a model in the function __init__ and define the feedforward behavior of a network that employs those initialized layers in the function forward, which takes in an input image tensor, x. The structure of this Net class is written in models.py and is imported in the notebook 
+```code
+    from models import Net
+    net = Net()
+```
+
 1. Start to build from simple small 3-layer network : one 1 conv/relu + Max pooling layer (models0.py) + (flatten) 1 Fully connected layer
 
 |Layer  | Description |
@@ -61,6 +76,7 @@ Randomly rotating and/or flipping the images in the dataset
 > Regarding to Kaggle Competition, I've inspired by NaimishNet architecture thanks to its performance anaylsis. 
 
 ### training the model
+During training, PyTorch performs backpropagation by keeping track of the network's feedforward behavior and using autograd to calculate the update to the weights in the network. 
 * For an optimizer, I selected Adam ptimizer. Adam optimizer is widely preferred with convolutional neural networks.
 * For Loss Function, I selected SmoothL1Loss, since it is a very reliable alternative to MSELoss, because it tends to be more robust to outliers in the data while training. It combines the advantages of both L1-loss (steady gradients for large values of x) and L2-loss (fewer oscillations during updates when x is small). 
 
@@ -80,7 +96,7 @@ roi = image_copy[max(y-margin,0):min(y+h+margin,image.shape[0]),
 ```
 
 ## Fun with Facial Keypoints(Notebook4)
-After detecting Keypoints, add sunglasses or hat to the face images. 
+After detecting Keypoints,using trained facial keypoint detector, in the notebook4, I added sunglasses to detected face's in an image by using the keypoints detected around a person's eyes. In order to overlay fun images like sunglasses to face image, alpha channel is used. Alpha channel is the 4th channel respresents the transparency level of each pixel in the image from RGB image. Here's how the transparency channel works: the lower the value, the more transparent, or see-through, the pixel will become. The lower bound (completely transparent) is zero here, so any pixels set to 0 will not be seen; these look like white background pixels in the image above, but they are actually totally transparent. With this transparent channel I can place this rectangular image of sunglasses on an image of a face and still see the face area that is techically covered by the transparentbackground of the sunglasses image.
 
 ## Discussion 
 Next Step would be...
