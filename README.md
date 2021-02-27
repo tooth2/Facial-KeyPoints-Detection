@@ -106,7 +106,7 @@ Next Step would be...
 I am going to try transfer lerning such as ResNet50 , VGG-19 or some deeper network architecture like inception3 using PyTorch's pretrained model 
 2. Data Augmentation
 Randomly rotating and/or flipping the images in the dataset
-* [x]haar cascade filter 
-* [x]Namish net like neural network 
-* [ ]Transfer learning(ResNet50, VGG-19 or Inceptionv3)
-* [ ]Data Augmentation(Random rotation or flipping) 
+* [x] haar cascade filter 
+* [x] Namish net like neural network 
+* [x] Transfer learning(ResNet50, VGG-19 or Inceptionv3)
+* [x] Data Augmentation(Random rotation or flipping) 
